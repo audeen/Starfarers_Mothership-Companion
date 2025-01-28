@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Sternenfahrer Demo</title>
+    <!-- Titel von "Sternenfahrer Demo" zu etwas Produktionsreifem geändert -->
+    <title>Sternenfahrer</title>
 
-    <!-- Orbitron-Font (kosmetische Schriftart) -->
+    <!-- Orbitron-Font (nur kosmetisch) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -25,10 +26,16 @@
             font-size: 1.1rem;
         }
 
+        /* 
+          #app wird skaliert. transform-origin auf "top left",
+          damit wir um die linke obere Ecke herum vergrößern/verkleinern.
+        */
         #app {
             max-width: 800px;
             margin: 0 auto;
             padding: 1rem;
+            transform-origin: top left;
+            /* #CHANGED: für UI-Scaling */
         }
 
         /* =========== TOP-BAR =========== */
@@ -135,9 +142,8 @@
             /* dicker Rand */
         }
 
-        /* 
-           Falls du im Overlay dieselbe Größe willst,
-           setze hier exakt dieselben Werte.
+        /*
+          Overlay-Kugeln gleiche Größe
         */
         .overlayWurf .marble-circle {
             width: 20px;
@@ -147,7 +153,6 @@
             border: 3px solid #fff;
         }
 
-        /* Mini-Badge nur für Kugeln (ohne Namen/Farbe/Freundschaftsicons) */
         .mini-badge {
             display: inline-flex;
             align-items: center;
@@ -245,15 +250,37 @@
             font-size: 1rem;
             opacity: 0.85;
         }
+
+        /* 
+          #CHANGED: Servernachricht unten zentriert
+          (gewünscht: unten mittig platziert)
+        */
+        .status-message {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+            z-index: 10000;
+            /* über allen anderen Elementen */
+        }
     </style>
 </head>
 
 <body>
     <div id="app">
 
-        <!-- Overlay: hier zeigen wir NUR die Kugeln (über mini-badge) und die Werte -->
+        <!-- 
+            Overlay: Titel angepasst von "Wurf (Snippet)" zu etwas neutralerem/prod-reifem 
+            #CHANGED
+        -->
         <div class="overlayWurf" v-if="showWurfOverlay">
-            <h2>Wurf (Snippet)</h2>
+            <h2>Aktueller Wurf</h2>
             <!-- Mini-Badge für Kugeln -->
             <div class="mini-badge">
                 <span v-for="(m,i) in overlayMarbles" :key="i" class="marble-circle" :class="m"></span>
@@ -288,12 +315,22 @@
             </span>
         </div>
 
-        <h1>Digitales Mutterschiff-Demo</h1>
-        <p>Status: {{ statusMessage }}</p>
+        <!-- 
+            H1 aktualisiert (keine Demo mehr)
+            #CHANGED
+        -->
+        <h1>Digitales Mutterschiff</h1>
+
+        <!--
+            #CHANGED:
+            Der bisherige "Status: ..." Text wurde entfernt, 
+            damit wir ihn unten anheften (siehe class="status-message" weiter unten).
+        -->
 
         <!-- Falls kein Player ausgewählt ist: neues Spielerformular -->
         <div v-if="!currentPlayerId">
-            <h3>Neuen Spieler anlegen</h3>
+            <!-- Text von "Neuen Spieler anlegen" => "Neuen Spieler hinzufügen" (o.Ä.) -->
+            <h3>Neuen Spieler hinzufügen</h3>
             <div class="label-line">
                 <strong>Name:</strong><br>
                 <input v-model="newPlayerName" placeholder="Name" style="font-size:1.1rem;">
@@ -308,33 +345,43 @@
                 </select>
             </div>
             <button @click="createPlayer" style="font-size:1.1rem;">
-                Neuen Spieler erstellen
+                Spieler erstellen
             </button>
             <p style="margin-top:0.5rem;">
-                Oder oben auf einen existierenden klicken, um ihn zu steuern.
+                Wähle stattdessen oben einen Spieler aus, um ihn zu verwalten.
             </p>
         </div>
 
         <!-- Player-Details, wenn currentPlayerId gesetzt -->
         <div v-else>
-            <h2>Hallo {{ currentPlayerName }} ({{ currentPlayerColor }})</h2>
+            <!--
+                #CHANGED:
+                Anstatt "Hallo {{ currentPlayerName }} ({{ currentPlayerColor }})"
+                => "Spieler: <span :style="{color:currentPlayerColor}">Name</span>"
+            -->
+            <h2>
+                Spieler:
+                <span :style="{ color: currentPlayerColor }">
+                    {{ currentPlayerName }}
+                </span>
+            </h2>
 
             <div class="player-box">
                 <h3>Ausbauten</h3>
                 <div class="label-line">
-                    <strong>Antriebe (2× Treibstoff, max.6)</strong><br>
+                    <strong>Antriebe (max.6)</strong><br>
                     <button class="adjust-btn" @click="incrementAntriebe(-1)">-</button>
                     <span>{{ myPlayer.antriebe }}</span>
                     <button class="adjust-btn" @click="incrementAntriebe(+1)">+</button>
                 </div>
                 <div class="label-line">
-                    <strong>Bordkanone (2× Carbon, max.6)</strong><br>
+                    <strong>Bordkanone (max.6)</strong><br>
                     <button class="adjust-btn" @click="incrementKanonen(-1)">-</button>
                     <span>{{ myPlayer.bordkanonen }}</span>
                     <button class="adjust-btn" @click="incrementKanonen(+1)">+</button>
                 </div>
                 <div class="label-line">
-                    <strong>Frachtmodul (2× Erz, max.5)</strong><br>
+                    <strong>Frachtmodul (max.5)</strong><br>
                     <button class="adjust-btn" @click="incrementFracht(-1)">-</button>
                     <span>{{ myPlayer.frachtmodule }}</span>
                     <button class="adjust-btn" @click="incrementFracht(+1)">+</button>
@@ -380,11 +427,11 @@
                 <h3>Wurf</h3>
 
                 <div v-if="myPlayer.letzter_wurf">
-                    <!-- Letzter Wurf (Snippet: Kugeln ohne Name/Farbe/Icons) -->
                     <p>Letzter Wurf:</p>
                     <div class="mini-badge">
                         <span class="marble-circle" v-for="(mc,idx) in normalizeMarbles(myPlayer.letzter_wurf.kugeln)"
-                            :key="idx" :class="mc"></span>
+                            :key="idx" :class="mc">
+                        </span>
                     </div>
                     <p>Grund: {{ myPlayer.letzter_wurf.grundgeschwindigkeit }}</p>
                     <p>
@@ -401,6 +448,20 @@
                 </button>
             </div>
 
+            <!-- 
+                #CHANGED:
+                Oben über "Diesen Spieler löschen" und "Spiel zurücksetzen" 
+                zwei Buttons zum Ändern des UI-Scale (gewünscht).
+            -->
+            <div style="text-align:center; margin-top:1rem;">
+                <button @click="scaleDown" style="background:#ffc107; font-size:1.1rem;">
+                    UI verkleinern
+                </button>
+                <button @click="scaleUp" style="background:#ffc107; font-size:1.1rem;">
+                    UI vergrößern
+                </button>
+            </div>
+
             <!-- Buttons unten (Löschen / Spiel zurücksetzen) -->
             <div style="text-align:center; margin-top:1rem;">
                 <button @click="deleteMe" style="background:#e53935; font-size:1.1rem;">
@@ -410,12 +471,22 @@
                     Spiel zurücksetzen
                 </button>
             </div>
+
+
+            <!-- Servernachricht unten mittig (als "Pseudo-Button") -->
+            <div style="text-align:center;margin-top:1rem;">
+                <button style="background:#555; color:#fff; cursor:default;">
+                    {{ statusMessage }}
+                </button>
+            </div>
         </div>
     </div>
+    </div>
+
+
 
     <script>
         // Mapping zur Normalisierung eingehender Kugelnamen
-        // (z.B. "Blau" oder " gelb " => "blau"/"gelb")
         const MARBLE_MAP = {
             "rot": "rot", "Rot": "rot",
             "blau": "blau", "Blau": "blau",
@@ -434,8 +505,6 @@
                     newPlayerName: "",
                     newPlayerColor: "",
                     colorOptions: ["red", "blue", "green", "yellow", "black", "white"],
-
-                    // Overlay-Daten (für snippet-Anzeige)
                     showWurfOverlay: false,
                     overlayWurfData: {
                         playerName: "",
@@ -444,7 +513,10 @@
                         antriebe: 0,
                         friendshipAntrieb: 0,
                         finalSpeed: 0
-                    }
+                    },
+
+                    // #CHANGED: UI-Skalierungsfaktor
+                    uiScale: 1
                 };
             },
             computed: {
@@ -490,7 +562,6 @@
                     }
                     return arr;
                 },
-                // Normalisierte Kugeln für das Overlay (mini-badge)
                 overlayMarbles() {
                     return this.normalizeMarbles(this.overlayWurfData.kugeln);
                 }
@@ -500,7 +571,6 @@
                     if (!kugelnArr) return [];
                     return kugelnArr.map(k => {
                         let clean = (k || "").trim();
-                        // Auf Standard-Farbe mappen (z.B. "Rot" => "rot")
                         if (MARBLE_MAP[clean]) {
                             clean = MARBLE_MAP[clean];
                         }
@@ -528,12 +598,11 @@
                             let oldPlayers = this.gameState.players || {};
                             this.gameState = data.payload;
 
-                            // Prüfen, ob sich bei unserem aktuellen Spieler ein Wurf geändert hat
+                            // Falls bei unserem aktuellen Spieler ein neuer Wurf kam => Overlay
                             if (this.currentPlayerId) {
                                 let oldWurf = oldPlayers[this.currentPlayerId]?.letzter_wurf;
                                 let newWurf = this.myPlayer.letzter_wurf;
 
-                                // Falls es einen neuen/anderen Wurf gibt => Overlay zeigen
                                 if (newWurf && (
                                     !oldWurf
                                     || JSON.stringify(oldWurf.kugeln) !== JSON.stringify(newWurf.kugeln)
@@ -554,10 +623,12 @@
                 },
                 createPlayer() {
                     if (!this.newPlayerName) {
-                        alert("Name fehlt!"); return;
+                        alert("Name fehlt!");
+                        return;
                     }
                     if (!this.newPlayerColor) {
-                        alert("Farbe fehlt!"); return;
+                        alert("Farbe fehlt!");
+                        return;
                     }
                     if (this.usedColors.includes(this.newPlayerColor)) {
                         alert("Farbe schon belegt!");
@@ -567,7 +638,7 @@
                         name: this.newPlayerName,
                         color: this.newPlayerColor
                     });
-                    // Kleiner Trick: nach kurzer Zeit den neuesten pX wählen
+                    // Nach kurzer Zeit den neuesten Player wählen
                     setTimeout(() => {
                         let maxN = 0, newest = null;
                         for (let pid in this.players) {
@@ -647,12 +718,9 @@
                 },
                 doWurf() {
                     if (!this.currentPlayerId) return;
-                    // Löst auf dem Server doWurf aus -> neuer Wurf
                     this.sendAction("doWurf", { playerId: this.currentPlayerId });
                 },
                 showRollOverlay(newWurf) {
-                    // Hier übernehmen wir nur die Kugeln und Geschwindigkeitswerte
-                    console.log("[showRollOverlay] roher newWurf=", newWurf);
                     let base = newWurf.grundgeschwindigkeit || 0;
                     let a = this.myPlayer.antriebe || 0;
                     let f = 0;
@@ -673,10 +741,29 @@
                     setTimeout(() => {
                         this.showWurfOverlay = false;
                     }, 5000);
+                },
+
+                // #CHANGED: Methoden zum Skalieren des UI
+                scaleUp() {
+                    this.uiScale += 0.1;
+                    this.applyScale();
+                },
+                scaleDown() {
+                    // etwas begrenzen, z.B. nicht unter 0.5
+                    this.uiScale = Math.max(0.5, this.uiScale - 0.1);
+                    this.applyScale();
+                },
+                applyScale() {
+                    // per JavaScript den transform-Stil auf #app anwenden
+                    const appDiv = document.getElementById('app');
+                    if (appDiv) {
+                        appDiv.style.transform = `scale(${this.uiScale})`;
+                    }
                 }
             },
             mounted() {
                 this.connectWS();
+                this.applyScale(); // initialen Scale anwenden
             }
         }).mount("#app");
     </script>

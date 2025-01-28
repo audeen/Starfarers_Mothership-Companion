@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Server-Skript mit:
- - HTTP-Server (Port 8000) -> index.html + statische Dateien
- - WebSocket-Server (Port 8765) -> Echtzeitkommunikation
+PRODUKTIONSSERVER-SKRIPT:
+ - Stellt einen HTTP-Server (Port 8000) bereit, der index.html und statische Dateien ausliefert.
+ - Stellt einen WebSocket-Server (Port 8765) für die Echtzeitkommunikation bereit.
 
-Erzeugt bei doWurf() Kugeln aus ["rot","blau","gelb","schwarz","gruen"].
+Die Spielmechanik ermöglicht das Ziehen und Auswerten von Kugeln verschiedener Farben
+sowie das Verwalten von Spielern und deren Ausbauten.
 """
 
 import http.server
@@ -35,7 +36,7 @@ MARBLE_VALUES = {
     "blau": 1,
     "gelb": 2,
     "rot": 3,
-    "gruen": 1  # Falls du "gruen" brauchst
+    "gruen": 1  # Hier exemplarisch für "gruen"
 }
 
 def reset_game_state():
@@ -49,7 +50,7 @@ def reset_game_state():
 def do_wurf():
     """
     Zieht per Zufall 2 Kugeln (ohne Zurücklegen) aus MARBLE_BAG.
-    random.sample sorgt dafür, dass nie derselbe Index zweimal gezogen wird.
+    random.sample stellt sicher, dass nie derselbe Index zweimal gewählt wird.
     """
     return random.sample(MARBLE_BAG, 2)
 
@@ -57,7 +58,7 @@ def compute_base_speed(kugeln):
     """
     Berechnet die Grundgeschwindigkeit des Wurfs:
     - Falls "schwarz" dabei ist => 3
-    - Sonst Summe der Einzelwerte
+    - Sonst Summe der Einzelwerte (laut MARBLE_VALUES).
     """
     if "schwarz" in kugeln:
         return 3
@@ -123,7 +124,7 @@ async def handle_message(msg):
         if pid in GAME_STATE["players"]:
             drawn = do_wurf()  # z.B. ["rot","schwarz"]
             base  = compute_base_speed(drawn)
-            print(f"[SERVER] doWurf fuer {pid} => kugeln={drawn}, grund={base}")
+            print(f"[SERVER] doWurf für {pid} => kugeln={drawn}, grund={base}")
             GAME_STATE["players"][pid]["letzter_wurf"] = {
                 "kugeln": drawn,
                 "grundgeschwindigkeit": base
