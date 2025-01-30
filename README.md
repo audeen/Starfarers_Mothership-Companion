@@ -136,3 +136,157 @@ Kontakt / Feedback
 Fragen und Anregungen gerne als GitHub-Issue oder via Pull Request einreichen.
 
 Viel Erfolg und gutes Reisen durch die Galaxis!
+
+
+
+
+
+
+
+Du:
+kannst du mir das nochmal entsprechend aufgehübscht als markdown mit ein paar emojis ausgeben?
+
+Thought about README mit Emojis für ein paar Sekunden
+🚀 Digitales Mutterschiff für Sternenfahrer von Catan
+Willkommen zu dieser inoffiziellen Erweiterung, die das legendäre Mutterschiff aus Sternenfahrer von Catan digital abbildet.
+Gerade wenn die alten physischen Raumschiff-Modelle den Geist aufgegeben haben oder beschädigt sind, ersetzt diese App das analoge Mutterschiff. Sie übernimmt das Würfeln (Kugel-Ziehen) sowie das Verwalten aller Ausbauten für jeden Spieler und jede Spielerin.
+
+Hinweis: Das Projekt steht in keiner offiziellen Verbindung mit Catan oder Kosmos und ist lediglich ein Fan-Projekt.
+
+🪐 Funktionsübersicht
+Digitales Mutterschiff:
+Per Klick auf „Wurf ausführen“ werden virtuelle Kugeln gezogen, die Grundgeschwindigkeit wird berechnet und eine Begegnung (schwarze Kugel) angezeigt.
+
+Ausbauten verwalten:
+Jeder kann Antriebe, Bordkanonen und Frachtmodule bequem in der App einstellen – kein Fummeln am echten Plastikschiff mehr.
+
+Ruhmesringe & Freundschaftskarten:
+Einfaches Erfassen der Ruhmesringe (Medaillen) sowie Verwaltung von Freundschaftskarten (+2 Antrieb, +2 Kampfkraft oder +1 Kombi).
+
+Übersicht mit allen Spielenden:
+Perfekt für einen zentralen Bildschirm: Anzeige aller Spieler mit jeweiligen Ausbauten, Würfen und Ruhmesringen in einer praktischen Grid-Ansicht.
+
+Mehrgeräte-Unterstützung:
+Jeder kann von seinem Smartphone, Tablet oder Laptop das eigene Schiff steuern. Durch WebSocket-Synchronisation sind alle Daten sofort aktuell.
+
+📁 Projektstruktur
+In diesem Repository findest du im Wesentlichen zwei Dateien:
+
+server.py
+
+Startet einen HTTP-Server (Port 8000), der die index.html ausliefert
+Startet einen WebSocket-Server (Port 8765), über den alle Clients synchronisiert werden
+Beinhaltet die Spiel-Logik (Kugel-Ziehen, Ausbauten aktualisieren etc.)
+Speichert den aktuellen Spielzustand im Arbeitsspeicher
+index.html
+
+Enthält das Frontend mit HTML, CSS und Vue.js (per CDN)
+Stellt das UI für jeden Spieler zur Verfügung:
+Spieler erstellen, auswählen oder löschen
+Ausbauten setzen
+Wurf ausführen
+Ruhmesringe und Freundschaftskarten pflegen
+Übersicht aller Spielenden
+⚙️ Voraussetzungen
+Python 3.7 oder höher (getestet unter Python 3.9/3.10)
+Das Python-Paket websockets zur Realisierung der WebSocket-Kommunikation:
+bash
+Kopieren
+Bearbeiten
+pip install websockets
+(Ggf. in einem virtuellen Environment deiner Wahl.)
+
+🚀 Installation & Start
+Repository klonen oder die Dateien server.py und index.html in ein beliebiges Verzeichnis kopieren.
+
+Abhängigkeiten installieren (mindestens websockets):
+
+bash
+Kopieren
+Bearbeiten
+pip install websockets
+Server starten:
+
+bash
+Kopieren
+Bearbeiten
+python server.py
+Der Server wird auf
+
+Port 8000 (HTTP) und
+Port 8765 (WebSocket)
+laufen.
+Browser öffnen:
+Gehe auf http://localhost:8000. Dort findest du die Startseite mit allen Funktionen.
+
+Mehrere Geräte verbinden:
+
+Auf anderen Endgeräten im gleichen (WLAN-)Netz einfach http://IP-des-Servers:8000 im Browser aufrufen.
+Alle UIs sind in Echtzeit miteinander synchronisiert.
+💡 Nutzung
+Spieler erstellen
+Auf der Startseite Namen und Farbe eingeben
+„Spieler erstellen“ klicken
+In der Top-Bar erscheint eine Badge mit Name & Farbe
+Spieler auswählen
+In der Top-Bar auf den Badge des Spielers klicken, um dessen individuelle Schiffsübersicht zu sehen
+Ausbauten einstellen
+Innerhalb des gewählten Spielers:
+Antriebe, Bordkanonen und Frachtmodule über Plus/Minus-Buttons anpassen
+Würfeln
+Per Klick auf „Wurf ausführen“ zieht der Server 2 Kugeln aus dem virtuellen Beutel
+Angezeigt werden:
+Farben der Kugeln (z.B. Rot, Blau oder Schwarz)
+Grundgeschwindigkeit
+Falls eine schwarze Kugel erscheint, gibt es eine Begegnung!
+Ruhmesringe & Freundschaft
+Ruhmesringe (Medaillen) können hoch-/runtergezählt werden
+Freundschaftskarten werden per Checkbox aktiviert/deaktiviert
+Übersicht
+Über die Top-Bar „Übersicht“ anzeigen lassen
+Zeigt alle Spieler mit ihren Ausbauten, Ruhmesringen und letztem Wurf
+Ideal für einen geteilten Bildschirm oder Beamer
+Spiel zurücksetzen
+Im Einzelspieler-Dashboard kannst du das gesamte Spiel auf Null zurücksetzen
+🔧 Hinter den Kulissen
+Echtzeit-Update:
+server.py speichert alles in GAME_STATE. Jede Aktion (Ausbau ändern, Würfeln etc.) wird vom Client an den Server gesendet. Dieser aktualisiert den Zustand und verteilt ihn per Broadcast via WebSocket an alle verbundenen Clients.
+
+Kugel-Zieh-Logik:
+
+Standardmäßig wird aus ["gelb", "gelb", "rot", "blau", "schwarz"] per random.sample gezogen
+schwarze Kugel ⇒ Grundgeschwindigkeit = 3, ansonsten wird sie aus den Farbwerten summiert
+Datei-Serving:
+
+Ein einfacher HTTP-Server (Port 8000) liefert statische Dateien (vor allem index.html) aus
+Keine persistente Speicherung:
+
+Nach einem Neustart von server.py sind alle Daten weg
+Für den Hausgebrauch reicht das aber in der Regel
+🔋 Tipps zur Anpassung
+Kugeln: In server.py kann man den Beutel MARBLE_BAG beliebig anpassen oder mehr Kugeln hinzufügen.
+Maximale Ausbauten: Standardmäßig sind 6 Antriebe / Kanonen und 5 Frachtmodule als Obergrenze hinterlegt. Bei Bedarf ändern.
+GUI-Styling: Sämtliche CSS-Regeln sind in index.html enthalten. Dort kann man Farben, Schriftarten usw. anpassen.
+⚠️ Bekannte Einschränkungen
+Nur RAM-Speicherung: Kein automatisches Speichern des Zustands auf Festplatte.
+Keine Zugriffsbeschränkung: Wer den Link kennt, kann mitspielen oder manipulieren.
+Beispiel: Schneller Ablauf
+Server starten
+bash
+Kopieren
+Bearbeiten
+python server.py
+http://localhost:8000 im Browser öffnen
+Spieler anlegen (Name + Farbe)
+Spieler aus Top-Bar auswählen, Ausbauten setzen
+Wurf ausführen – das System zeigt die Kugeln und berechnet die Grundgeschwindigkeit
+Mehrere Geräte verbinden (Mobil, Tablet, etc.)
+Überblick in der „Übersicht“-Seite genießen
+🌟 Lizenz & Dank
+Lizenz: MIT License
+Danksagung:
+Allen Sternenfahrer-Fans, die das Originalspiel lieben!
+Und vielen Dank an die Vue.js-Community für die coole Framework-Basis.
+Bei Fragen, Feedback oder Verbesserungsvorschlägen freuen wir uns über Issues oder Pull Requests.
+
+Viel Erfolg und gutes Fliegen in der Galaxis! ✨
