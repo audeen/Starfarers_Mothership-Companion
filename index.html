@@ -3,10 +3,9 @@
 
 <head>
     <meta charset="UTF-8" />
-    <!-- Titel von "Sternenfahrer Demo" zu etwas Produktionsreifem geändert -->
     <title>Sternenfahrer</title>
 
-    <!-- Orbitron-Font (nur kosmetisch) -->
+    <!-- Orbitron-Font (kosmetische Schriftart) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
@@ -20,32 +19,38 @@
             margin: 0;
             padding: 0;
             font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(to bottom right, #1e1e1e 60%, #3f2d2d);
+            background: radial-gradient(circle at 20% 20%, #1e1e1e 40%, #3f2d2d 100%);
             color: #f0e6d2;
             line-height: 1.5;
             font-size: 1.1rem;
         }
 
-        /* 
-          #app wird skaliert. transform-origin auf "top left",
-          damit wir um die linke obere Ecke herum vergrößern/verkleinern.
+        /*
+          #outer ist jetzt unser "gemeinsamer" Vue-Root-Container.
+          Wir mounten am Ende per .mount('#outer'), sodass
+          Top-Bar UND App-Inhalt dieselben Reaktiv-Daten (players etc.) sehen.
         */
-        #app {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 1rem;
-            transform-origin: top left;
-            /* #CHANGED: für UI-Scaling */
-        }
+        /* Entfernt oder befüllt diese Regel, damit keine leere Ruleset-Warnung entsteht */
+        /*#outer {
+            padding: 0; 
+        }*/
 
         /* =========== TOP-BAR =========== */
         .top-bar {
+            /* FIXIERT am Viewport */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+
+            /* Hintergrund etc. */
+            background: rgba(0, 0, 0, 0.7);
             border-bottom: 2px solid #ff9800;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
+            padding: 1rem 2rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
         .player-badge {
@@ -53,14 +58,15 @@
             align-items: center;
             background: #333;
             border: 1px solid #555;
-            border-radius: 4px;
-            padding: 6px 8px;
+            border-radius: 6px;
+            padding: 10px 14px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.2s;
         }
 
         .player-badge:hover {
             background: #444;
+            transform: scale(1.03);
         }
 
         .color-box {
@@ -70,84 +76,108 @@
             border: 1px solid #bbb;
         }
 
-        /* =========== HEADLINE / BUTTONS =========== */
+        /* 
+           #app wurde im Skript bereits genutzt. 
+           Jetzt dient es als Inhalts-Bereich 
+           UNTER der fixierten Top-Bar. 
+           => margin-top, damit nichts überlappt.
+        */
+        #app {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            margin-top: 7rem;
+            /* damit die fixierte Top-Bar nicht überlappt */
+            transform-origin: top left;
+        }
+
+        /* Hier die neue Regel für die Übersicht-Seite: */
+        #app.overview-page {
+            margin: 0;
+            /* entfernt das Zentrieren */
+            max-width: none;
+            /* sorgt dafür, dass die Grid-Spalten Platz haben */
+        }
+
+        /* =========== HEADLINE, Buttons, etc. =========== */
         h1 {
             margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            font-size: 2.4rem;
             text-align: center;
             color: #ffa000;
+            text-shadow: 0 0 8px rgba(255, 160, 0, 0.5);
         }
 
         @media(max-width:600px) {
             h1 {
-                font-size: 1.7rem;
+                font-size: 1.9rem;
             }
         }
 
         button {
             background: #ff9800;
             border: none;
-            padding: 0.8rem 1.4rem;
-            border-radius: 6px;
+            padding: 1rem 1.8rem;
+            border-radius: 8px;
             color: #1e1e1e;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             cursor: pointer;
-            margin: 0.5rem 0.5rem 0.5rem 0;
-            transition: background 0.3s;
+            margin: 0.7rem 0.7rem 0.7rem 0;
+            transition: background 0.3s, transform 0.2s;
         }
 
         button:hover {
             background: #ffa726;
+            transform: scale(1.03);
         }
 
         .adjust-btn {
-            font-size: 1.3rem;
-            margin: 0 0.3rem;
+            font-size: 1.4rem;
+            margin: 0 0.4rem;
             display: inline-block;
-            width: 2.8rem;
+            width: 3rem;
             text-align: center;
+            font-weight: bold;
+        }
+
+        .big-num {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0 0.3rem;
         }
 
         /* =========== PLAYER-BOX =========== */
         .player-box {
-            background: rgba(50, 50, 50, 0.4);
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
+            background: rgba(50, 50, 50, 0.5);
+            padding: 1.8rem;
+            margin: 1.5rem auto;
+            border-radius: 10px;
             border: 1px solid #444;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.2);
+            text-align: center;
+            max-width: 600px;
         }
 
         hr {
             border: none;
             border-top: 1px solid #777;
-            margin: 1rem 0;
+            margin: 1.2rem 0;
         }
 
         h2,
         h3 {
             color: #ffd54f;
             margin-top: 0.5rem;
+            text-shadow: 0 0 5px rgba(255, 213, 79, 0.3);
         }
 
         /* =========== MARBLES (Kugeln) =========== */
         .marble-circle {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            margin-left: 4px;
-            vertical-align: middle;
-            border: 3px solid #fff;
-            /* dicker Rand */
-        }
-
-        /*
-          Overlay-Kugeln gleiche Größe
-        */
-        .overlayWurf .marble-circle {
-            width: 20px;
-            height: 20px;
             margin-left: 4px;
             vertical-align: middle;
             border: 3px solid #fff;
@@ -180,7 +210,7 @@
             background: #555;
         }
 
-        /* =========== OVERLAY =========== */
+        /* =========== OVERLAY-WURF =========== */
         .overlayWurf {
             position: fixed;
             top: 50%;
@@ -188,35 +218,27 @@
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.85);
             color: #fff;
-            padding: 2rem;
-            border-radius: 10px;
+            padding: 2.5rem;
+            border-radius: 12px;
             text-align: center;
             z-index: 9999;
-            width: 360px;
+            width: 420px;
             max-width: 90%;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
-            font-size: 1.3rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            font-size: 2rem;
             line-height: 1.5;
+            cursor: pointer;
         }
 
         .overlayWurf h2 {
             margin: 0 0 1rem;
-            font-size: 1.8rem;
+            font-size: 2.4rem;
             color: #ffca28;
+            text-shadow: 0 0 5px rgba(255, 202, 40, 0.5);
         }
 
         .overlayWurf p {
             margin: 0.8rem 0;
-        }
-
-        @media(max-width:600px) {
-            .overlayWurf {
-                font-size: 1.2rem;
-            }
-
-            .overlayWurf h2 {
-                font-size: 1.6rem;
-            }
         }
 
         /* =========== RUHMESRINGE =========== */
@@ -225,20 +247,21 @@
             flex-wrap: wrap;
             gap: 4px;
             margin: 0.3rem 0;
+            justify-content: center;
             align-items: center;
         }
 
         .ring-circle {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             background: #777;
             border: 2px solid #aaa;
         }
 
         .gold-circle {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             background: #ffa726;
             border: 2px solid #fff;
@@ -251,242 +274,345 @@
             opacity: 0.85;
         }
 
-        /* 
-          #CHANGED: Servernachricht unten zentriert
-          (gewünscht: unten mittig platziert)
-        */
-        .status-message {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+        /* =========== ÜBERSICHTS-SEITE =========== */
+        .overview-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            /* 6 Spalten */
+            gap: 1.5rem;
+            /* Abstände zwischen den Boxen */
+            justify-items: center;
+            /* zentriert den Inhalt jeder Zelle innerhalb der Spalte */
+        }
+
+        .overview-box {
+            width: 260px;
+            flex: 0 0 auto;
             text-align: center;
-            z-index: 10000;
-            /* über allen anderen Elementen */
+            background: rgba(50, 50, 50, 0.4);
+            border-radius: 10px;
+            border: 1px solid #444;
+            padding: 1.5rem;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.2);
         }
     </style>
 </head>
 
 <body>
-    <div id="app">
+    <!-- Gemeinsamer Container: Vue wird hierauf gemountet -->
+    <div id="outer">
 
-        <!-- 
-            Overlay: Titel angepasst von "Wurf (Snippet)" zu etwas neutralerem/prod-reifem 
-            #CHANGED
-        -->
-        <div class="overlayWurf" v-if="showWurfOverlay">
-            <h2>Aktueller Wurf</h2>
-            <!-- Mini-Badge für Kugeln -->
-            <div class="mini-badge">
-                <span v-for="(m,i) in overlayMarbles" :key="i" class="marble-circle" :class="m"></span>
-            </div>
-            <p>Grundgeschwindigkeit: {{ overlayWurfData.baseSpeed }}</p>
-            <p>
-                + Ausbauten ({{ overlayWurfData.antriebe }} Antriebe)
-                <span v-if="overlayWurfData.friendshipAntrieb>0">
-                    + {{ overlayWurfData.friendshipAntrieb }} (Karten)
-                </span>
-            </p>
-            <p><strong>Gesamt: {{ overlayWurfData.finalSpeed }}</strong></p>
-        </div>
-
-        <!-- Top-Bar (alle Spieler) -->
+        <!-- TOP-BAR (fixiert, hat direkten Zugriff auf "players" etc., 
+             weil Vue auf #outer läuft) -->
         <div class="top-bar">
-            <!-- Badge pro Spieler; Klick wählt Spieler aus -->
+            <!-- HOME-Button -->
+            <span class="player-badge" @click="goHome">
+                <span style="margin-right:5px;">🏠</span>
+                Home
+            </span>
+
+            <!-- Übersicht-Badge -->
+            <span class="player-badge" @click="selectOverview">
+                <span style="margin-right:5px;">📜</span>
+                Übersicht
+            </span>
+
+            <!-- Spieler-Badges -->
             <span v-for="(pObj, pId) in players" :key="pId" class="player-badge" @click="selectPlayer(pId)">
                 <span class="color-box" :style="{ backgroundColor: pObj.color }"></span>
                 {{ pObj.name }}
 
-                <!-- Letzter Wurf in Mini-Form (oben in der Leiste) -->
+                <!-- Letzter Wurf (mini) -->
                 <template v-if="pObj.letzter_wurf && pObj.letzter_wurf.kugeln">
                     <span class="marble-circle" v-for="(mc, idx) in normalizeMarbles(pObj.letzter_wurf.kugeln)"
-                        :key="idx" :class="mc"></span>
+                        :key="idx" :class="mc">
+                    </span>
                 </template>
 
-                <!-- Freundschaftskarten-Icons -->
-                <span v-if="pObj.friendship.kampf_plus2" class="friendship-badge">⚔️+2</span>
-                <span v-if="pObj.friendship.antrieb_plus2" class="friendship-badge">🚀+2</span>
-                <span v-if="pObj.friendship.combo_plus1" class="friendship-badge">⚔️+🚀+1</span>
+                <!-- Freundschafts-Badges -->
+                <span v-if="pObj.friendship.kampf_plus2" class="friendship-badge">⚔️⚔️</span>
+                <span v-if="pObj.friendship.antrieb_plus2" class="friendship-badge">🚀🚀</span>
+                <span v-if="pObj.friendship.combo_plus1" class="friendship-badge">⚔️🚀</span>
             </span>
         </div>
 
-        <!-- 
-            H1 aktualisiert (keine Demo mehr)
-            #CHANGED
-        -->
-        <h1>Digitales Mutterschiff</h1>
-
-        <!--
-            #CHANGED:
-            Der bisherige "Status: ..." Text wurde entfernt, 
-            damit wir ihn unten anheften (siehe class="status-message" weiter unten).
-        -->
-
-        <!-- Falls kein Player ausgewählt ist: neues Spielerformular -->
-        <div v-if="!currentPlayerId">
-            <!-- Text von "Neuen Spieler anlegen" => "Neuen Spieler hinzufügen" (o.Ä.) -->
-            <h3>Neuen Spieler hinzufügen</h3>
-            <div class="label-line">
-                <strong>Name:</strong><br>
-                <input v-model="newPlayerName" placeholder="Name" style="font-size:1.1rem;">
+        <!-- BEMERKUNG: Dynamische Klasse "overview-page" -->
+        <div id="app" :class="{ 'overview-page': currentPlayerId === 'overview' }">
+            <!-- OVERLAY (manuelles Schließen) -->
+            <div class="overlayWurf" v-if="showWurfOverlay" @click="closeWurfOverlay">
+                <h2>Aktueller Wurf</h2>
+                <div class="mini-badge">
+                    <span v-for="(m,i) in overlayMarbles" :key="i" class="marble-circle" :class="m">
+                    </span>
+                </div>
+                <p>Grundgeschwindigkeit: {{ overlayWurfData.baseSpeed }}</p>
+                <p>
+                    + Ausbauten ({{ overlayWurfData.antriebe }} Antriebe)
+                    <span v-if="overlayWurfData.friendshipAntrieb>0">
+                        + {{ overlayWurfData.friendshipAntrieb }} (Karten)
+                    </span>
+                </p>
+                <p><strong>Gesamt: {{ overlayWurfData.finalSpeed }}</strong></p>
+                <p v-if="overlayMarbles.includes('schwarz')" style="color:#f22; font-weight:bold; margin-top:1rem;">
+                    Begegnung!
+                </p>
+                <p style="font-size:1rem; margin-top:1.5rem; opacity:0.7;">
+                    (Klicken zum Schließen)
+                </p>
             </div>
-            <div class="label-line">
-                <strong>Farbe:</strong><br>
-                <select v-model="newPlayerColor" style="font-size:1.1rem;">
-                    <option disabled value="">(Farbe wählen)</option>
-                    <option v-for="c in colorOptions" :value="c" :disabled="usedColors.includes(c)">
-                        {{ c }}
-                    </option>
-                </select>
+
+            <h1>Digitales Mutterschiff</h1>
+
+            <!-- Übersicht -->
+            <div v-if="currentPlayerId === 'overview'">
+                <h2>Spieler-Übersicht</h2>
+                <!-- Status as Button -->
+                <div style="margin-bottom:1rem;">
+                    <button style="background:#555; color:#fff; cursor:default;">
+                        {{ statusMessage }}
+                    </button>
+                </div>
+                <div class="overview-container">
+                    <!-- Alle Spieler in Boxen -->
+                    <div v-for="(pObj, pId) in players" :key="pId" class="overview-box">
+                        <h3>Spieler: <span :style="{ color: pObj.color }">{{ pObj.name }}</span></h3>
+
+                        <p>Antriebe:</p>
+                        <div class="ring-row">
+                            <span v-for="i in pObj.antriebe" :key="'A'+i" style="font-size:1.8rem;">🚀</span>
+                        </div>
+                        <button @click="incrementAntriebeFor(pId, -1)">-</button>
+                        <button @click="incrementAntriebeFor(pId, +1)">+</button>
+
+                        <p>Bordkanonen:</p>
+                        <div class="ring-row">
+                            <span v-for="i in pObj.bordkanonen" :key="'K'+i" style="font-size:1.8rem;">🔫</span>
+                        </div>
+                        <button @click="incrementKanonenFor(pId, -1)">-</button>
+                        <button @click="incrementKanonenFor(pId, +1)">+</button>
+
+                        <p>Frachtmodule:</p>
+                        <div class="ring-row">
+                            <span v-for="i in pObj.frachtmodule" :key="'F'+i" style="font-size:1.8rem;">📦</span>
+                        </div>
+                        <button @click="incrementFrachtFor(pId, -1)">-</button>
+                        <button @click="incrementFrachtFor(pId, +1)">+</button>
+
+                        <hr>
+                        <p>Ruhmesringe: <span class="big-num">{{ pObj.ruhmesringe }}</span></p>
+                        <button @click="changeMedaillenFor(pId, -1)">-</button>
+                        <button @click="changeMedaillenFor(pId, +1)">+</button>
+                        <div class="ring-row">
+                            <span v-for="r in pObj.ruhmesringe" :key="'RR'+r+'-'+Math.random()" class="ring-circle">
+                            </span>
+                        </div>
+
+                        <hr>
+                        <p>Freundschaftskarten:</p>
+                        <label>
+                            <input type="checkbox" v-model="pObj.friendship.kampf_plus2"
+                                @change="toggleFriendshipFor(pId, 'kampf_plus2')">
+                            ⚔️+2 Kampfkraft
+                        </label><br>
+                        <label>
+                            <input type="checkbox" v-model="pObj.friendship.antrieb_plus2"
+                                @change="toggleFriendshipFor(pId, 'antrieb_plus2')">
+                            🚀+2 Antrieb
+                        </label><br>
+                        <label>
+                            <input type="checkbox" v-model="pObj.friendship.combo_plus1"
+                                @change="toggleFriendshipFor(pId, 'combo_plus1')">
+                            ⚔️+🚀 +1
+                        </label>
+
+                        <hr>
+                        <div v-if="pObj.letzter_wurf">
+                            <p>Letzter Wurf:</p>
+                            <div class="mini-badge">
+                                <span class="marble-circle"
+                                    v-for="(mc,idx) in normalizeMarbles(pObj.letzter_wurf.kugeln)" :key="idx"
+                                    :class="mc">
+                                </span>
+                            </div>
+                            <p>Grund: {{ pObj.letzter_wurf.grundgeschwindigkeit }}</p>
+                            <p>Gesamt-Flugweite: {{ totalSpeedOf(pId) }}</p>
+                            <p v-if="normalizeMarbles(pObj.letzter_wurf.kugeln).includes('schwarz')"
+                                style="color:#f22; font-weight:bold; margin-top:0.5rem;">
+                                Begegnung!
+                            </p>
+                        </div>
+                        <div v-else>
+                            <em>Kein Wurf</em>
+                        </div>
+                        <button @click="doWurfFor(pId)">Wurf ausführen</button>
+                    </div>
+                </div>
             </div>
-            <button @click="createPlayer" style="font-size:1.1rem;">
-                Spieler erstellen
-            </button>
-            <p style="margin-top:0.5rem;">
-                Wähle stattdessen oben einen Spieler aus, um ihn zu verwalten.
-            </p>
-        </div>
 
-        <!-- Player-Details, wenn currentPlayerId gesetzt -->
-        <div v-else>
-            <!--
-                #CHANGED:
-                Anstatt "Hallo {{ currentPlayerName }} ({{ currentPlayerColor }})"
-                => "Spieler: <span :style="{color:currentPlayerColor}">Name</span>"
-            -->
-            <h2>
-                Spieler:
-                <span :style="{ color: currentPlayerColor }">
-                    {{ currentPlayerName }}
-                </span>
-            </h2>
-
-            <div class="player-box">
-                <h3>Ausbauten</h3>
+            <!-- Spielerform (wenn kein currentPlayerId) -->
+            <div v-else-if="!currentPlayerId">
+                <h3>Neuen Spieler hinzufügen</h3>
                 <div class="label-line">
-                    <strong>Antriebe (max.6)</strong><br>
+                    <strong>Name:</strong><br>
+                    <input v-model="newPlayerName" placeholder="Name" style="font-size:1.1rem;">
+                </div>
+                <div class="label-line">
+                    <strong>Farbe:</strong><br>
+                    <select v-model="newPlayerColor" style="font-size:1.1rem;">
+                        <option disabled value="">(Farbe wählen)</option>
+                        <option v-for="c in colorOptions" :value="c" :disabled="usedColors.includes(c)">
+                            {{ c }}
+                        </option>
+                    </select>
+                </div>
+                <button @click="createPlayer" style="font-size:1.1rem;">
+                    Spieler erstellen
+                </button>
+                <p style="margin-top:0.5rem;">
+                    Oder oben einen bestehenden Spieler wählen.
+                </p>
+            </div>
+
+            <!-- Einzelner Spieler -->
+            <div v-else>
+                <div class="player-box">
+                    <h1>
+                        Spieler:
+                        <span :style="{ color: currentPlayerColor }">
+                            {{ currentPlayerName }}
+                        </span>
+                    </h1>
+                    <hr>
+                    <h2>Ausbauten</h2>
+
+                    <h4>Antriebe:</h4>
+                    <div class="ring-row">
+                        <span v-for="i in myPlayer.antriebe" :key="'A'+i" style="font-size:1.8rem;">🚀</span>
+                    </div>
+                    <br>
                     <button class="adjust-btn" @click="incrementAntriebe(-1)">-</button>
-                    <span>{{ myPlayer.antriebe }}</span>
+                    <span class="big-num">{{ myPlayer.antriebe }}</span>
                     <button class="adjust-btn" @click="incrementAntriebe(+1)">+</button>
-                </div>
-                <div class="label-line">
-                    <strong>Bordkanone (max.6)</strong><br>
+                    <br>
+
+                    <h4>Bordkanonen:</h4>
+                    <div class="ring-row">
+                        <span v-for="i in myPlayer.bordkanonen" :key="'K'+i" style="font-size:1.8rem;">🔫</span>
+                    </div>
+                    <br>
                     <button class="adjust-btn" @click="incrementKanonen(-1)">-</button>
-                    <span>{{ myPlayer.bordkanonen }}</span>
+                    <span class="big-num">{{ myPlayer.bordkanonen }}</span>
                     <button class="adjust-btn" @click="incrementKanonen(+1)">+</button>
-                </div>
-                <div class="label-line">
-                    <strong>Frachtmodul (max.5)</strong><br>
+                    <br>
+
+                    <h4>Frachtmodule:</h4>
+                    <div class="ring-row">
+                        <span v-for="i in myPlayer.frachtmodule" :key="'F'+i" style="font-size:1.8rem;">📦</span>
+                    </div>
+                    <br>
                     <button class="adjust-btn" @click="incrementFracht(-1)">-</button>
-                    <span>{{ myPlayer.frachtmodule }}</span>
+                    <span class="big-num">{{ myPlayer.frachtmodule }}</span>
                     <button class="adjust-btn" @click="incrementFracht(+1)">+</button>
-                </div>
+                    <br>
 
-                <hr>
-                <h3>Ruhmesringe</h3>
-                <div class="label-line">
-                    <button class="adjust-btn" @click="changeMedaillen(-1)">-</button>
-                    <span>{{ myPlayer.ruhmesringe }}</span>
-                    <button class="adjust-btn" @click="changeMedaillen(+1)">+</button>
-                </div>
-                <!-- Ringe in Grau -->
-                <div class="ring-row">
-                    <span v-for="r in myPlayer.ruhmesringe" :key="r+'-'+Math.random()" class="ring-circle"></span>
-                </div>
-                <div class="label-line"><strong>Siegpunkte:</strong></div>
-                <!-- Goldene Kreise je 2 Ringe -->
-                <div class="ring-row">
-                    <span v-for="s in ringPoints" :key="'sp'+s" class="gold-circle"></span>
-                </div>
-
-                <hr>
-                <h3>Freundschaftskarten</h3>
-                <p style="margin-bottom:0.3rem;">Aktiviere/Deaktiviere deine Boni:</p>
-                <label>
-                    <input type="checkbox" v-model="myPlayer.friendship.kampf_plus2"
-                        @change="toggleFriendship('kampf_plus2')">
-                    ⚔️+2 Kampfkraft
-                </label><br>
-                <label>
-                    <input type="checkbox" v-model="myPlayer.friendship.antrieb_plus2"
-                        @change="toggleFriendship('antrieb_plus2')">
-                    🚀+2 Antrieb
-                </label><br>
-                <label>
-                    <input type="checkbox" v-model="myPlayer.friendship.combo_plus1"
-                        @change="toggleFriendship('combo_plus1')">
-                    ⚔️+🚀 +1
-                </label>
-
-                <hr>
-                <h3>Wurf</h3>
-
-                <div v-if="myPlayer.letzter_wurf">
-                    <p>Letzter Wurf:</p>
-                    <div class="mini-badge">
-                        <span class="marble-circle" v-for="(mc,idx) in normalizeMarbles(myPlayer.letzter_wurf.kugeln)"
-                            :key="idx" :class="mc">
+                    <hr>
+                    <h3>Ruhmesringe</h3>
+                    <div class="label-line">
+                        <button class="adjust-btn" @click="changeMedaillen(-1)">-</button>
+                        <span class="big-num">{{ myPlayer.ruhmesringe }}</span>
+                        <button class="adjust-btn" @click="changeMedaillen(+1)">+</button>
+                    </div>
+                    <div class="ring-row">
+                        <span v-for="r in myPlayer.ruhmesringe" :key="r+'-'+Math.random()" class="ring-circle">
                         </span>
                     </div>
-                    <p>Grund: {{ myPlayer.letzter_wurf.grundgeschwindigkeit }}</p>
-                    <p>
-                        Ausbauten (Antriebe): {{ myPlayer.antriebe }}
-                        <span v-if="friendshipAntrieb > 0">+ {{ friendshipAntrieb }} (Karten)</span>
-                    </p>
-                    <p>Gesamt-Flugweite: {{ lastWurfTotalSpeed }}</p>
+                    <div class="label-line"><strong>Siegpunkte:</strong></div>
+                    <div class="ring-row">
+                        <span v-for="s in ringPoints" :key="'sp'+s" class="gold-circle"></span>
+                    </div>
+
+                    <hr>
+                    <h3>Freundschaftskarten</h3>
+                    <label>
+                        <input type="checkbox" v-model="myPlayer.friendship.kampf_plus2"
+                            @change="toggleFriendship('kampf_plus2')">
+                        <span :style="{ fontSize: '1.5rem' }">⚔️⚔️</span>
+                    </label><br>
+                    <label>
+                        <input type="checkbox" v-model="myPlayer.friendship.antrieb_plus2"
+                            @change="toggleFriendship('antrieb_plus2')">
+                        <span :style="{ fontSize: '1.5rem' }">🚀🚀</span>
+                    </label><br>
+                    <label>
+                        <input type="checkbox" v-model="myPlayer.friendship.combo_plus1"
+                            @change="toggleFriendship('combo_plus1')">
+                        <span :style="{ fontSize: '1.5rem' }">⚔️🚀</span>
+                    </label>
+
+                    <hr>
+                    <h3>Wurf</h3>
+                    <div v-if="myPlayer.letzter_wurf">
+                        <p>Letzter Wurf:</p>
+                        <div class="mini-badge">
+                            <span class="marble-circle"
+                                v-for="(mc,idx) in normalizeMarbles(myPlayer.letzter_wurf.kugeln)" :key="idx"
+                                :class="mc">
+                            </span>
+                        </div>
+                        <p>Grund: {{ myPlayer.letzter_wurf.grundgeschwindigkeit }}</p>
+                        <p>
+                            Ausbauten (Antriebe): {{ myPlayer.antriebe }}
+                            <span v-if="friendshipAntrieb > 0">
+                                + {{ friendshipAntrieb }} (Karten)
+                            </span>
+                        </p>
+                        <p>Gesamt-Flugweite: {{ lastWurfTotalSpeed }}</p>
+                        <p v-if="normalizeMarbles(myPlayer.letzter_wurf.kugeln).includes('schwarz')"
+                            style="color:#f22; font-weight:bold; margin-top:0.5rem;">
+                            Begegnung!
+                        </p>
+                    </div>
+                    <div v-else>
+                        <em>Kein Wurf</em>
+                    </div>
+                    <button @click="doWurf">
+                        Wurf ausführen
+                    </button>
                 </div>
-                <div v-else>
-                    <em>Kein Wurf</em>
+
+                <!-- UI Scale / Delete / Reset -->
+                <div style="text-align:center; margin-top:1.5rem;">
+                    <button @click="scaleDown" style="background:#ffc107;">
+                        UI verkleinern
+                    </button>
+                    <button @click="scaleUp" style="background:#ffc107;">
+                        UI vergrößern
+                    </button>
+                    <button @click="deleteMe" style="background:#e53935;">
+                        Diesen Spieler löschen
+                    </button>
+                    <button @click="resetGame" style="background:#888;">
+                        Spiel zurücksetzen
+                    </button>
                 </div>
-                <button @click="doWurf" style="font-size:1.1rem;">
-                    Wurf ausführen
-                </button>
-            </div>
 
-            <!-- 
-                #CHANGED:
-                Oben über "Diesen Spieler löschen" und "Spiel zurücksetzen" 
-                zwei Buttons zum Ändern des UI-Scale (gewünscht).
-            -->
-            <div style="text-align:center; margin-top:1rem;">
-                <button @click="scaleDown" style="background:#ffc107; font-size:1.1rem;">
-                    UI verkleinern
-                </button>
-                <button @click="scaleUp" style="background:#ffc107; font-size:1.1rem;">
-                    UI vergrößern
-                </button>
-            </div>
+                <!-- Servernachricht -->
+                <div style="text-align:center;margin-top:1rem;">
+                    <button style="background:#555; color:#fff; cursor:default;">
+                        {{ statusMessage }}
+                    </button>
+                </div>
+            </div><!-- /v-else einzelner Spieler -->
+        </div><!-- /#app -->
 
-            <!-- Buttons unten (Löschen / Spiel zurücksetzen) -->
-            <div style="text-align:center; margin-top:1rem;">
-                <button @click="deleteMe" style="background:#e53935; font-size:1.1rem;">
-                    Diesen Spieler löschen
-                </button>
-                <button @click="resetGame" style="background:#888; font-size:1.1rem;">
-                    Spiel zurücksetzen
-                </button>
-            </div>
-
-
-            <!-- Servernachricht unten mittig (als "Pseudo-Button") -->
-            <div style="text-align:center;margin-top:1rem;">
-                <button style="background:#555; color:#fff; cursor:default;">
-                    {{ statusMessage }}
-                </button>
-            </div>
-        </div>
-    </div>
-    </div>
-
-
+    </div><!-- /#outer -->
 
     <script>
-        // Mapping zur Normalisierung eingehender Kugelnamen
+        /* 
+           Wichtig: Wir mounten jetzt auf "#outer" 
+           statt auf "#app", damit die Top-Bar
+           (außerhalb von #app) trotzdem reaktive Daten hat!
+        */
         const MARBLE_MAP = {
             "rot": "rot", "Rot": "rot",
             "blau": "blau", "Blau": "blau",
@@ -514,8 +640,6 @@
                         friendshipAntrieb: 0,
                         finalSpeed: 0
                     },
-
-                    // #CHANGED: UI-Skalierungsfaktor
                     uiScale: 1
                 };
             },
@@ -532,7 +656,7 @@
                 },
                 myPlayer() {
                     if (!this.currentPlayerId) return {};
-                    return this.players[this.currentPlayerId] || {};
+                    return this.gameState.players[this.currentPlayerId] || {};
                 },
                 currentPlayerName() {
                     return this.myPlayer.name || "";
@@ -557,9 +681,7 @@
                     const rr = this.myPlayer.ruhmesringe || 0;
                     const sp = Math.floor(rr / 2);
                     let arr = [];
-                    for (let i = 0; i < sp; i++) {
-                        arr.push(i);
-                    }
+                    for (let i = 0; i < sp; i++) arr.push(i);
                     return arr;
                 },
                 overlayMarbles() {
@@ -567,19 +689,18 @@
                 }
             },
             methods: {
-                normalizeMarbles(kugelnArr) {
-                    if (!kugelnArr) return [];
-                    return kugelnArr.map(k => {
-                        let clean = (k || "").trim();
-                        if (MARBLE_MAP[clean]) {
-                            clean = MARBLE_MAP[clean];
+                normalizeMarbles(arr) {
+                    if (!arr) return [];
+                    return arr.map(k => {
+                        let c = (k || "").trim();
+                        if (MARBLE_MAP[c]) {
+                            c = MARBLE_MAP[c];
                         }
-                        return clean;
+                        return c;
                     });
                 },
                 connectWS() {
                     this.ws = new WebSocket(`ws://${location.hostname}:8765/`);
-
                     this.ws.onopen = () => {
                         this.statusMessage = "WebSocket verbunden.";
                     };
@@ -590,37 +711,45 @@
                     this.ws.onerror = (e) => {
                         console.error("WS-Error:", e);
                     };
-
                     this.ws.onmessage = (evt) => {
+                        const oldPlayers = this.gameState.players || {};
                         const data = JSON.parse(evt.data);
-                        console.log("[DEBUG] new message:", data);
+
                         if (data.type === "GAME_STATE") {
-                            let oldPlayers = this.gameState.players || {};
                             this.gameState = data.payload;
+                            // Wenn gerade ein Spieler ausgewählt ist => Wurf-Vergleich
+                            if (this.currentPlayerId && this.gameState.players[this.currentPlayerId]) {
+                                const oldWurf = oldPlayers[this.currentPlayerId]?.letzter_wurf;
+                                const newWurf = this.gameState.players[this.currentPlayerId].letzter_wurf;
+                                if (newWurf && newWurf.kugeln) {
+                                    const changed =
+                                        !oldWurf ||
+                                        JSON.stringify(oldWurf.kugeln) !== JSON.stringify(newWurf.kugeln) ||
+                                        (oldWurf.grundgeschwindigkeit !== newWurf.grundgeschwindigkeit);
 
-                            // Falls bei unserem aktuellen Spieler ein neuer Wurf kam => Overlay
-                            if (this.currentPlayerId) {
-                                let oldWurf = oldPlayers[this.currentPlayerId]?.letzter_wurf;
-                                let newWurf = this.myPlayer.letzter_wurf;
-
-                                if (newWurf && (
-                                    !oldWurf
-                                    || JSON.stringify(oldWurf.kugeln) !== JSON.stringify(newWurf.kugeln)
-                                    || oldWurf.grundgeschwindigkeit !== newWurf.grundgeschwindigkeit
-                                )) {
-                                    this.showRollOverlay(newWurf);
+                                    if (changed) {
+                                        this.showRollOverlay(newWurf);
+                                    }
                                 }
                             }
                         }
                     };
                 },
-                sendAction(action, data) {
-                    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-                        this.statusMessage = "WS nicht offen.";
-                        return;
-                    }
-                    this.ws.send(JSON.stringify({ action, data }));
+
+                // Navigation
+                goHome() {
+                    this.currentPlayerId = null;
+                    this.newPlayerName = "";
+                    this.newPlayerColor = "";
                 },
+                selectOverview() {
+                    this.currentPlayerId = "overview";
+                },
+                selectPlayer(pid) {
+                    this.currentPlayerId = pid;
+                },
+
+                // Aktionen
                 createPlayer() {
                     if (!this.newPlayerName) {
                         alert("Name fehlt!");
@@ -638,7 +767,6 @@
                         name: this.newPlayerName,
                         color: this.newPlayerColor
                     });
-                    // Nach kurzer Zeit den neuesten Player wählen
                     setTimeout(() => {
                         let maxN = 0, newest = null;
                         for (let pid in this.players) {
@@ -653,9 +781,6 @@
                         }
                     }, 500);
                 },
-                selectPlayer(pid) {
-                    this.currentPlayerId = pid;
-                },
                 deleteMe() {
                     if (!this.currentPlayerId) return;
                     const sure = confirm("Diesen Spieler löschen?");
@@ -669,27 +794,26 @@
                     this.sendAction("resetGame", {});
                     this.currentPlayerId = null;
                 },
-                incrementAntriebe(v) {
+
+                // Ausbauten
+                incrementAntriebe(delta) {
                     if (!this.currentPlayerId) return;
-                    let newVal = (this.myPlayer.antriebe || 0) + v;
-                    if (newVal < 0) newVal = 0;
-                    if (newVal > 6) newVal = 6;
+                    let newVal = (this.myPlayer.antriebe || 0) + delta;
+                    newVal = Math.max(0, Math.min(6, newVal));
                     this.myPlayer.antriebe = newVal;
                     this.updateAusbau();
                 },
-                incrementKanonen(v) {
+                incrementKanonen(delta) {
                     if (!this.currentPlayerId) return;
-                    let newVal = (this.myPlayer.bordkanonen || 0) + v;
-                    if (newVal < 0) newVal = 0;
-                    if (newVal > 6) newVal = 6;
+                    let newVal = (this.myPlayer.bordkanonen || 0) + delta;
+                    newVal = Math.max(0, Math.min(6, newVal));
                     this.myPlayer.bordkanonen = newVal;
                     this.updateAusbau();
                 },
-                incrementFracht(v) {
+                incrementFracht(delta) {
                     if (!this.currentPlayerId) return;
-                    let newVal = (this.myPlayer.frachtmodule || 0) + v;
-                    if (newVal < 0) newVal = 0;
-                    if (newVal > 5) newVal = 5;
+                    let newVal = (this.myPlayer.frachtmodule || 0) + delta;
+                    newVal = Math.max(0, Math.min(5, newVal));
                     this.myPlayer.frachtmodule = newVal;
                     this.updateAusbau();
                 },
@@ -702,11 +826,13 @@
                         frachtmodule: this.myPlayer.frachtmodule
                     });
                 },
-                changeMedaillen(d) {
+
+                // Medaillen / Freundschaft
+                changeMedaillen(delta) {
                     if (!this.currentPlayerId) return;
                     this.sendAction("updateMedaillen", {
                         playerId: this.currentPlayerId,
-                        delta: d
+                        delta
                     });
                 },
                 toggleFriendship(t) {
@@ -716,17 +842,21 @@
                         type: t
                     });
                 },
+
+                // Wurf
                 doWurf() {
                     if (!this.currentPlayerId) return;
                     this.sendAction("doWurf", { playerId: this.currentPlayerId });
                 },
+
+                // Overlay
                 showRollOverlay(newWurf) {
                     let base = newWurf.grundgeschwindigkeit || 0;
                     let a = this.myPlayer.antriebe || 0;
                     let f = 0;
                     if (this.myPlayer.friendship) {
-                        f += this.myPlayer.friendship.antrieb_plus2 ? 2 : 0;
-                        f += this.myPlayer.friendship.combo_plus1 ? 1 : 0;
+                        if (this.myPlayer.friendship.antrieb_plus2) f += 2;
+                        if (this.myPlayer.friendship.combo_plus1) f += 1;
                     }
                     let total = base + a + f;
 
@@ -737,24 +867,100 @@
                     this.overlayWurfData.finalSpeed = total;
 
                     this.showWurfOverlay = true;
-                    // Nach 5s Overlay ausblenden
-                    setTimeout(() => {
-                        this.showWurfOverlay = false;
-                    }, 5000);
+                },
+                closeWurfOverlay() {
+                    this.showWurfOverlay = false;
                 },
 
-                // #CHANGED: Methoden zum Skalieren des UI
+                // WebSocket
+                sendAction(action, data) {
+                    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+                        this.statusMessage = "WS nicht offen.";
+                        return;
+                    }
+                    this.ws.send(JSON.stringify({ action, data }));
+                },
+
+                // Übersicht (Buttons in der Overview-Box)
+                incrementAntriebeFor(pid, delta) {
+                    const p = this.gameState.players[pid];
+                    if (!p) return;
+                    let newVal = (p.antriebe || 0) + delta;
+                    newVal = Math.max(0, Math.min(6, newVal));
+                    p.antriebe = newVal;
+                    this.sendAction("updateAusbau", {
+                        playerId: pid,
+                        antriebe: p.antriebe,
+                        bordkanonen: p.bordkanonen,
+                        frachtmodule: p.frachtmodule
+                    });
+                },
+                incrementKanonenFor(pid, delta) {
+                    const p = this.gameState.players[pid];
+                    if (!p) return;
+                    let newVal = (p.bordkanonen || 0) + delta;
+                    newVal = Math.max(0, Math.min(6, newVal));
+                    p.bordkanonen = newVal;
+                    this.sendAction("updateAusbau", {
+                        playerId: pid,
+                        antriebe: p.antriebe,
+                        bordkanonen: p.bordkanonen,
+                        frachtmodule: p.frachtmodule
+                    });
+                },
+                incrementFrachtFor(pid, delta) {
+                    const p = this.gameState.players[pid];
+                    if (!p) return;
+                    let newVal = (p.frachtmodule || 0) + delta;
+                    newVal = Math.max(0, Math.min(5, newVal));
+                    p.frachtmodule = newVal;
+                    this.sendAction("updateAusbau", {
+                        playerId: pid,
+                        antriebe: p.antriebe,
+                        bordkanonen: p.bordkanonen,
+                        frachtmodule: p.frachtmodule
+                    });
+                },
+                changeMedaillenFor(pid, delta) {
+                    this.sendAction("updateMedaillen", {
+                        playerId: pid,
+                        delta
+                    });
+                },
+                toggleFriendshipFor(pid, t) {
+                    this.sendAction("toggleFriendship", {
+                        playerId: pid,
+                        type: t
+                    });
+                },
+                doWurfFor(pid) {
+                    this.sendAction("doWurf", { playerId: pid });
+                },
+                totalSpeedOf(pid) {
+                    const p = this.players[pid];
+                    if (!p || !p.letzter_wurf) return 0;
+                    let base = p.letzter_wurf.grundgeschwindigkeit || 0;
+                    let a = p.antriebe || 0;
+                    let f = 0;
+                    if (p.friendship) {
+                        if (p.friendship.antrieb_plus2) f += 2;
+                        if (p.friendship.combo_plus1) f += 1;
+                    }
+                    return base + a + f;
+                },
+
+                // UI-Scaling
                 scaleUp() {
                     this.uiScale += 0.1;
                     this.applyScale();
                 },
                 scaleDown() {
-                    // etwas begrenzen, z.B. nicht unter 0.5
                     this.uiScale = Math.max(0.5, this.uiScale - 0.1);
                     this.applyScale();
                 },
                 applyScale() {
-                    // per JavaScript den transform-Stil auf #app anwenden
+                    // Wir skalieren NUR den #app-Bereich, 
+                    // die Top-Bar bleibt davon unberührt (und fixiert!)
                     const appDiv = document.getElementById('app');
                     if (appDiv) {
                         appDiv.style.transform = `scale(${this.uiScale})`;
@@ -763,10 +969,11 @@
             },
             mounted() {
                 this.connectWS();
-                this.applyScale(); // initialen Scale anwenden
+                this.applyScale();
             }
-        }).mount("#app");
+        }).mount("#outer");  // <-- Hier auf #outer!
     </script>
+
 </body>
 
 </html>
