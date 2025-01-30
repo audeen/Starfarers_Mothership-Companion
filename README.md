@@ -143,13 +143,6 @@ pip install websockets
 
 ---
 
-## ⚠️ Bekannte Einschränkungen
-
-- **Nur RAM-Speicherung**: Kein automatisches Speichern des Zustands auf Festplatte.
-- **Keine Zugriffsbeschränkung**: Wer den Link kennt, kann mitspielen oder manipulieren.
-
----
-
 ## Beispiel: Schneller Ablauf
 
 1. **Server starten**  
@@ -164,13 +157,6 @@ pip install websockets
 7. **Überblick** in der „Übersicht“-Seite genießen
 
 ---
-
-## 🌟 Lizenz & Dank
-
-- **Lizenz**: [MIT License](https://opensource.org/licenses/MIT)  
-- **Danksagung**:  
-  - Allen Sternenfahrer-Fans, die das Originalspiel lieben!  
-  - Und vielen Dank an die [Vue.js](https://vuejs.org)-Community für die coole Framework-Basis.
 
 Viel Erfolg und **gutes Fliegen** in der Galaxis! ✨
 
